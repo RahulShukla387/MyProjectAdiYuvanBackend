@@ -1,0 +1,20 @@
+import express from "express";
+import { userId } from "../middleware/UserAuth.js";
+export const reportAndVolunteer = express.Router();
+import { acceptVolunteer, getVolunteerData, markReadVolunteer, rejectVolunteer, requestVolunteer, viewVolunteer, getReportData, isSolvedReport, isReadReport, NotificationCountVolunteer, NotificationCountAdmin } from "../cotrollers/ReportAndVolunteer.js";
+import { upload } from "../cotrollers/uploadImageRoutes.js";
+import { VolunteerReportImage } from "../cotrollers/uploadImageRoutes.js";
+import { isAdmin , isVolunteer, isAdminOrVolunteer } from "../middleware/AdminAndVolunteer.js";
+ 
+reportAndVolunteer.post("/requestVolunteer", userId, requestVolunteer );
+reportAndVolunteer.post("/acceptVolunteer/:userId", isAdmin, acceptVolunteer );
+reportAndVolunteer.post("/rejectVolunteer/:userId", isAdmin, rejectVolunteer );
+reportAndVolunteer.post("/viewVolunteer/:userId", isAdmin, viewVolunteer );
+reportAndVolunteer.post("/markReadVolunteer/:volunteerId", isAdmin, markReadVolunteer );
+reportAndVolunteer.get("/getVolunteerData", isAdmin, getVolunteerData );
+reportAndVolunteer.post("/upload/reportIssue", upload.single("image"), VolunteerReportImage );
+reportAndVolunteer.get("/upload/getReportData", isAdminOrVolunteer, getReportData );
+reportAndVolunteer.post("/solvedReport/:id", isAdmin, isSolvedReport );
+reportAndVolunteer.post("/markReadReport/:id", isAdmin, isReadReport );
+reportAndVolunteer.get("/notificationCountVolunteer", isVolunteer, NotificationCountVolunteer );
+reportAndVolunteer.get("/notificationCountAdmin", isAdmin, NotificationCountAdmin );
