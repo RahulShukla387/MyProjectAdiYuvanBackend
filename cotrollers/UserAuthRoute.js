@@ -29,8 +29,8 @@ const Register = async( req, res)=>{
 
      res.cookie('token', token , {
         httpOnly: true,
-         secure: process.env.NODE_ENV ==='PRODUCTION',
-        sameSite: process.env.NODE_ENV ==='PRODUCTION'?'none':'strict',
+         secure: process.env.NODE_ENV ==='production',
+        sameSite: process.env.NODE_ENV ==='production'?'none':'strict',
         maxAge: 24*60*60*1000,
      })
 
@@ -68,8 +68,8 @@ const Login = async(req, res) =>{
      const token = await jwt.sign({id: user._id, role: user.role }, process.env.JWT_SECRET, {expiresIn: 24*60*60*1000,}) 
        res.cookie('token', token, {
          httpOnly: true,
-         secure: process.env.NODE_ENV==='PRODUCTION',
-         sameSite: (process.env.NODE_ENV === 'PRODUCTION')?'none': 'strict',
+         secure: process.env.NODE_ENV==='production',
+         sameSite: (process.env.NODE_ENV === 'production')?'none': 'strict',
          maxAge: 24*60*60*1000,
        })
        console.log(user);
@@ -86,8 +86,8 @@ const Logout = async(req, res) =>{
   try{
      res.clearCookie('token', {
        httpOnly: true,
-            secure: process.env.NODE_ENV==='PRODUCTION',
-            sameSite: (process.env.NODE_ENV === 'PRODUCTION')?'none': 'strict',
+            secure: process.env.NODE_ENV==='production',
+            sameSite: (process.env.NODE_ENV === 'production')?'none': 'strict',
             maxAge: 24*60*60*1000,
      })
      return res.json({success: true, message: "Meet me soon" })
@@ -259,8 +259,8 @@ const sendVerifyOtp = async(req, res)=>{
         
         res.cookie('token', token, {
          httpOnly: true,
-         secure: process.env.NODE_ENV==='PRODUCTION',
-         sameSite: (process.env.NODE_ENV === 'PRODUCTION')?'none': 'strict',
+         secure: process.env.NODE_ENV==='production',
+         sameSite: (process.env.NODE_ENV === 'production')?'none': 'strict',
          maxAge: 24*60*60*1000,
        })
 
@@ -282,8 +282,8 @@ const sendVerifyOtp = async(req, res)=>{
         
         res.cookie('token', token, {
          httpOnly: true,
-         secure: process.env.NODE_ENV==='PRODUCTION',
-         sameSite: (process.env.NODE_ENV === 'PRODUCTION')?'none': 'strict',
+         secure: process.env.NODE_ENV==='production',
+         sameSite: (process.env.NODE_ENV === 'production')?'none': 'strict',
          maxAge: 24*60*60*1000,
        })
 

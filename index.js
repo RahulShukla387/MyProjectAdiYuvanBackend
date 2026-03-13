@@ -6,6 +6,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
+ 
+//to deploy so that it pass proxies
+app.set('trust proxy', 1);
+
 import cookieParser from "cookie-parser";
 //todo rate Limiter 
 
