@@ -43,15 +43,39 @@ Deployment
 
 ## Features
 
-- Google OAuth authentication
-- JWT authentication system
-- Password reset via email
-- Donation handling with Razorpay
-- Image upload and retrieval
-- Secure API endpoints
-- Rate limiting for security
+### Authentication & Authorization
+- JWT based authentication
+- Google OAuth login integration
+- Role based access control for protected routes
 
----
+### User Management
+- Password reset functionality
+- Email notifications using Nodemailer
+- Secure cookie handling
+
+### Payment Integration
+- Razorpay order creation
+- Payment verification
+- Secure payment flow
+
+### Image Management
+- Image upload using Multer
+- Cloudinary integration for cloud image storage
+- API endpoints for retrieving uploaded images
+
+### Security
+- Helmet for HTTP security headers
+- Express rate limiting to prevent abuse
+- Secure CORS configuration
+- Input validation
+
+### Database
+- MongoDB Atlas integration
+- Mongoose models for structured data handling
+
+### Deployment
+- Backend deployed on Railway
+- Environment variables for sensitive configuration
 
 ## Environment Variables
 
