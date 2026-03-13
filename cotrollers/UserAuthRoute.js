@@ -4,6 +4,8 @@
  import bcrypt from "bcryptjs";
  import dotenv from 'dotenv';
  import { transporter } from "../config/Nodemailer.js";
+import { oauth2client } from "../config/GoogleConfig.js";
+import axios from 'axios';
  dotenv.config();
 const Register = async( req, res)=>{
  const { name, email, password } =  req.body;
@@ -183,6 +185,7 @@ const sendVerifyOtp = async(req, res)=>{
       }
 
       //Handling reset Password 
+
       const resetPassword = async(req, res)=>{
         const {email, Otp, password, confirmPassword} = req.body;
         if(!email || !Otp || !password || !confirmPassword){
@@ -233,4 +236,69 @@ const sendVerifyOtp = async(req, res)=>{
         }
       }
 
-export {Register, Login , Logout, getUserData, resetPassword, resetPasswordOtp, verifyEmail, sendVerifyOtp};
+   //todo Google Login
+
+   const googleLogin = async(req, res)=>{
+      try{
+      const {code} = req.body;
+      const googleRes = await oauth2client.getToken(code);
+      oauth2client.setCredentials(googleRes.tokens);
+      const userRes = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`)
+       const {email, name} = userRes.data;
+       let user = await User.findOne({email});
+       if(!user){
+        user = await  User.create({
+          name: name,
+          email: email
+        })
+        console.log(user);
+
+        const id = user._id;
+        // creating tokens 
+        const token = jwt.sign({id, email}, process.env.JWT_SECRET , {expiresIn: '24h',});
+        
+        res.cookie('token', token, {
+         httpOnly: true,
+         secure: process.env.NODE_ENV==='PRODUCTION',
+         sameSite: (process.env.NODE_ENV === 'PRODUCTION')?'none': 'strict',
+         maxAge: 24*60*60*1000,
+       })
+
+          await transporter.sendMail({
+         from: process.env.SENDER_EMAIL,
+              to: email,
+              subject: 'Welcome in My website',
+              text: `Welcome in my world. Your accound created successfully using email id ${email} `
+     })
+
+     console.log("Email Sent successfully");
+
+     return res.json({success: true, message: "You registered successfully" , token: token, user: user});
+       }
+       
+       const id = user._id;
+        // creating tokens 
+        const token = jwt.sign({id, email}, process.env.JWT_SECRET , {expiresIn: '24h',});
+        
+        res.cookie('token', token, {
+         httpOnly: true,
+         secure: process.env.NODE_ENV==='PRODUCTION',
+         sameSite: (process.env.NODE_ENV === 'PRODUCTION')?'none': 'strict',
+         maxAge: 24*60*60*1000,
+       })
+
+         return res.json({
+          success: true, token: token , user: user , message: "Logged in successfully",
+         })
+      }
+      catch(err){
+          return res.json({
+            success: false, 
+            message: "some error in google login",
+            err: err,
+          })
+      }
+   }
+
+
+export {Register, Login , Logout, getUserData, resetPassword, resetPasswordOtp, verifyEmail, sendVerifyOtp, googleLogin };

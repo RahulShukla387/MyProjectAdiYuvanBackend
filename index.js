@@ -7,12 +7,23 @@ dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 import cookieParser from "cookie-parser";
+//todo rate Limiter 
+
+import { limiter , authLimit } from "./middleware/RateLimit.js";
+app.use(limiter);
+
+
+
 app.use(cookieParser());
 //todo connecting frontend and backend
 import cors from "cors";
 import { UseCors } from "./config/Cors.js";
 app.use(cors(UseCors()));
-app.use(helmet());
+app.use(helmet(
+    {
+    crossOriginOpenerPolicy: false
+    }
+));
 
 //todo form handling
 
@@ -29,16 +40,16 @@ dbConnect();
  
 import { User } from "./models/User.js";
 import { Volunteer } from "./models/Volunteer.js";
-const deleteModel = async()=> {
+// const deleteModel = async()=> {
 //  console.log( "User deleted Successfully", await User.deleteMany({})  ) ;
- console.log( "Volunteer deleted Successfully", await Volunteer.deleteMany({})  ) ;
-}
+//  console.log( "Volunteer deleted Successfully", await Volunteer.deleteMany({})  ) ;
+// }
  
-//  await User.findOneAndUpdate({email: "knowmetechnical@gmail.com"},
-//    { $set:{role: "admin"}}
-//  )
+ await User.findOneAndUpdate({email: "knowmetechnical@gmail.com"},
+   { $set:{role: "admin"}}
+ )
 //  await User.findOneAndUpdate({email: "rs1256046@gmail.com"},
-//    { $set:{role: "user"}}
+//    { $set:{role: "volunteer"}}
 //  )
 
 // deleteModel()
@@ -53,9 +64,10 @@ import { reportAndVolunteer } from "./routes/ReportAndVolunteer.js";
 import { razorRouter } from "./routes/RazorPay.js";
 
 app.use("/api", UploadRoutes );
-app.use("/api/auth", AuthRouter);
-app.use("/api/admin", reportAndVolunteer );
+app.use("/api/auth", authLimit, AuthRouter);
+app.use("/api/admin",authLimit, reportAndVolunteer );
 app.use("/api/payment", razorRouter );
+
  
 
 app.listen(PORT, ()=>{
